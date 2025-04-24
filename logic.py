@@ -55,9 +55,28 @@ class VoteApp(QDialog):
         elif self.selected == "Abraham":
             total = int(self.ui.vote_count_abraham.text())
             self.ui.vote_count_abraham.setText(str(total + 1))
-        self.check_winner()
-    def check_winner(self):
-        print(self.ui.winner_label.text())
+        self.update_winner()
+
+    def update_winner(self):
+        count_carson = int(self.ui.vote_count_carson.text())
+        count_george = int(self.ui.vote_count_george.text())
+        count_abraham = int(self.ui.vote_count_abraham.text())
+
+        if count_carson == count_george == count_abraham:
+            self.ui.winner_label.setText("Winner: All Tie")
+        elif count_carson == max(count_carson, count_george, count_abraham):
+            self.ui.winner_label.setText("Winner: Carson")
+        elif count_george == max(count_carson, count_george, count_abraham):
+            self.ui.winner_label.setText("Winner: George")
+        elif count_abraham == max(count_carson, count_george, count_abraham):
+            self.ui.winner_label.setText("Winner: Abraham")
+        elif count_carson == count_george:
+            self.ui.winner_label.setText("Winner: Carson and George Tie")
+        elif count_carson == count_abraham:
+            self.ui.winner_label.setText("Winner: Carson and Abraham Tie")
+        elif count_george == count_abraham:
+            self.ui.winner_label.setText("Winner: George and Abraham Tie")
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     dialog = VoteApp()
