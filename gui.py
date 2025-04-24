@@ -90,7 +90,7 @@ class Ui_Vote_Menu(object):
 
         self.winner_label = QLabel(Vote_Menu)
         self.winner_label.setObjectName("winner_label")
-        self.winner_label.setGeometry(QRect(220, 140, 500, 16))
+        self.winner_label.setGeometry(QRect(180, 140, 500, 16))
         self.winner_label.setStyleSheet("font: 9pt 'Segoe Print';")
 
         self.widget = QWidget(Vote_Menu)
