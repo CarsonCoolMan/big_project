@@ -64,18 +64,19 @@ class VoteApp(QDialog):
 
         if count_carson == count_george == count_abraham:
             self.ui.winner_label.setText("Winner: All Tie")
-        elif count_carson == max(count_carson, count_george, count_abraham):
+        elif count_carson > count_george and count_carson > count_abraham:
             self.ui.winner_label.setText("Winner: Carson")
-        elif count_george == max(count_carson, count_george, count_abraham):
+        elif count_george > count_carson and count_george > count_abraham:
             self.ui.winner_label.setText("Winner: George")
-        elif count_abraham == max(count_carson, count_george, count_abraham):
+        elif count_abraham > count_george and count_abraham > count_carson:
             self.ui.winner_label.setText("Winner: Abraham")
         elif count_carson == count_george:
-            self.ui.winner_label.setText("Winner: Carson and George Tie")
+            self.ui.winner_label.setText("Winner: Carson & George Tie")
         elif count_carson == count_abraham:
-            self.ui.winner_label.setText("Winner: Carson and Abraham Tie")
+            self.ui.winner_label.setText("Winner: Carson & Abraham Tie")
         elif count_george == count_abraham:
-            self.ui.winner_label.setText("Winner: George and Abraham Tie")
+            self.ui.winner_label.setText("Winner: George & Abraham Tie")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
