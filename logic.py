@@ -32,6 +32,8 @@ class VoteApp(QDialog):
         original value
         """
         self.ui.Vote_button.clicked.connect(self.vote_select)
+
+        self.ui.end_vote.clicked.connect(self.end_vote)
     def vote_carson(self):
         self.selected = "Carson"
         self.ui.selection_label.setText("Selected: Carson")
@@ -45,7 +47,6 @@ class VoteApp(QDialog):
         self.ui.selection_label.setText("Selected: Abraham")
 
     def vote_select(self):
-        print(self.selected)
         if self.selected == "Carson":
             total = int(self.ui.vote_count_carson.text())
             self.ui.vote_count_carson.setText(str(total + 1))
@@ -76,6 +77,9 @@ class VoteApp(QDialog):
             self.ui.winner_label.setText("Winner: Carson & Abraham Tie")
         elif count_george == count_abraham:
             self.ui.winner_label.setText("Winner: George & Abraham Tie")
+
+    def end_vote(self):
+        self.close()
 
 
 if __name__ == "__main__":
