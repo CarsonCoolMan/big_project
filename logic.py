@@ -31,7 +31,7 @@ class VotingApp(QDialog):
         - Checks if there is duplicates or letters, if so the code will not
         continue
         - Records the vote if its valid
-        - upadtes labels
+        - updates labels
         """
         if (self.radiobutton_is_selected()):
             if(self.check_id()):
@@ -100,14 +100,13 @@ class VotingApp(QDialog):
         """
 
         if voter_id.isdigit():
-            self.ui.label.setText("")
+            self.ui.label_enter_number.setText("")
             try:
                 with open(filename, 'r', newline='') as file:
                     reader = csv.reader(file)
                     for row in reader:
                         if int(voter_id) == int(row[0]):
                             self.ui.label_already_voted.setText("Already Voted")
-                            self.ui.label.setText(" ")
                             return False
 
                 with open(filename, 'a', newline='') as file:
@@ -121,7 +120,7 @@ class VotingApp(QDialog):
                     writer.writerow([int(voter_id)])
                     return True
         else:
-            self.ui.label.setText("Enter a \n number")
+            self.ui.label_enter_number.setText("Enter a \n number")
             return False
 
 
