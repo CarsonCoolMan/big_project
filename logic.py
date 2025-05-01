@@ -1,89 +1,101 @@
 from gui import *
 from PyQt6.QtWidgets import QApplication, QDialog
+import csv
 import sys
+import os
 
-class VoteApp(QDialog):
+"""
+put ID as said in minimum video
+"""
+class VotingApp(QDialog):
     def __init__(self):
         super().__init__()
-        """
-        Sets the object UI_Vote_Menu to self.ui
-        sets up the window
-        """
-        self.ui = Ui_Vote_Menu()
+        self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
+        self.ui.button_vote.clicked.connect(self.handle_vote)
+
+    def handle_vote(self):
         """
-        connects all the buttons to the vote methods
-        that then change the selected label to the 
-        selected candadit
+        resets all the values if true
         """
-        self.ui.vote_carson.clicked.connect(self.vote_carson)
-        self.ui.vote_george.clicked.connect(self.vote_george)
-        self.ui.vote_abraham.clicked.connect(self.vote_abraham)
+        if(self.check_id() == False):
+            self.record_vote()
+            self.ui.label_already_voted.setText("Voted!!")
 
+            self.ui.textedit_id.clear()
+
+            for rb in [self.ui.radiobutton_carson, self.ui.radiobutton_john]:
+                rb.setAutoExclusive(False)
+                rb.setChecked(False)
+                rb.setAutoExclusive(True)
+
+    def record_vote(self):
+        voter_id = self.ui.textedit_id.toPlainText()
+
+        if self.ui.radiobutton_carson.isChecked():
+            selected_vote = "carson"
+        elif self.ui.radiobutton_john.isChecked():
+            selected_vote = "john"
+        else:
+            selected_vote = "none"
+
+        filename = "voting_logs.csv"
+
+        with open(filename, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([voter_id, selected_vote])
+
+    def check_id(self):
+        voter_id = self.ui.textedit_id.toPlainText()
+        filename = 'id_log.csv'
+        duplicate_or_letter = False
         """
-        :param: self.selected is set to nobody selected in
-        order to not cause error when nobody is selected
+        :param: duplicate_or_letter is switched to true if it 
+        is a duplicate or letter 
+        this first round of open tests if it is a 
+        duplicate or a letter
+        it sets the label to must be a number if it 
+        is not a number
+        if it is a number it sets it to " " in order to 
+        get rid of the label
         """
-        self.selected = "Nobody Selected"
+        try:
+            with open(filename, 'r', newline='') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if int(voter_id) == int(row[0]):
+                        duplicate_or_letter = True
+                        self.ui.label_already_voted.setText("Already Voted")
+                        self.ui.label.setText(" ")
+        except FileNotFoundError:
+            with open(filename, 'w', newline='') as file:
+                pass
+        except Exception:
+            duplicate_or_letter = True
+            self.ui.label.setText(" ")
+            self.ui.label_already_voted.setText(" ")
+            self.ui.label.setText("Must be \n a number")
         """
-        once the vote button is selected it changed whatever 
-        vote_label it is assiciated with to plus one of the 
-        original value
+        :param: voter_id is just the id text
+        this is going to add the id too the csv file
+        if it isnt already in there
         """
-        self.ui.Vote_button.clicked.connect(self.vote_select)
-
-        self.ui.end_vote.clicked.connect(self.end_vote)
-    def vote_carson(self):
-        self.selected = "Carson"
-        self.ui.selection_label.setText("Selected: Carson")
-
-    def vote_george(self):
-        self.selected = "George"
-        self.ui.selection_label.setText("Selected: George")
-
-    def vote_abraham(self):
-        self.selected = "Abraham"
-        self.ui.selection_label.setText("Selected: Abraham")
-
-    def vote_select(self):
-        if self.selected == "Carson":
-            total = int(self.ui.vote_count_carson.text())
-            self.ui.vote_count_carson.setText(str(total + 1))
-        elif self.selected == "George":
-            total = int(self.ui.vote_count_george.text())
-            self.ui.vote_count_george.setText(str(total + 1))
-        elif self.selected == "Abraham":
-            total = int(self.ui.vote_count_abraham.text())
-            self.ui.vote_count_abraham.setText(str(total + 1))
-        self.update_winner()
-
-    def update_winner(self):
-        count_carson = int(self.ui.vote_count_carson.text())
-        count_george = int(self.ui.vote_count_george.text())
-        count_abraham = int(self.ui.vote_count_abraham.text())
-
-        if count_carson == count_george == count_abraham:
-            self.ui.winner_label.setText("Winner: All Tie")
-        elif count_carson > count_george and count_carson > count_abraham:
-            self.ui.winner_label.setText("Winner: Carson")
-        elif count_george > count_carson and count_george > count_abraham:
-            self.ui.winner_label.setText("Winner: George")
-        elif count_abraham > count_george and count_abraham > count_carson:
-            self.ui.winner_label.setText("Winner: Abraham")
-        elif count_carson == count_george:
-            self.ui.winner_label.setText("Winner: Carson & George Tie")
-        elif count_carson == count_abraham:
-            self.ui.winner_label.setText("Winner: Carson & Abraham Tie")
-        elif count_george == count_abraham:
-            self.ui.winner_label.setText("Winner: George & Abraham Tie")
-
-    def end_vote(self):
-        self.close()
+        try:
+            if duplicate_or_letter == False:
+                with open(filename, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([int(voter_id)])
+        except Exception:
+            duplicate_or_letter = True
+            self.ui.label.setText(" ")
+            self.ui.label_already_voted.setText(" ")
+            self.ui.label.setText("Must be \n a number")
+        return duplicate_or_letter
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    dialog = VoteApp()
-    dialog.show()
+    window = VotingApp()
+    window.show()
     sys.exit(app.exec())
