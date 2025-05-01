@@ -21,8 +21,13 @@ class VotingApp(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
+
+        self.ui.textedit_id.textChanged.connect(self.clear_label_already_voted)
         self.ui.button_vote.clicked.connect(self.handle_vote)
 
+
+    def clear_label_already_voted(self):
+        self.ui.label_already_voted.setText("")
     def handle_vote(self):
         """
         Handle the voting submission process
@@ -36,12 +41,13 @@ class VotingApp(QDialog):
         if (self.radiobutton_is_selected()):
             if(self.check_id()):
                 self.record_vote()
-                self.ui.label_already_voted.setText("Voted!!")
                 self.clear_app()
+                self.ui.label_already_voted.setText("Voted!!")
 
     def radiobutton_is_selected(self):
         """
         checks if a radio button is selected
+        if it is it sets text to " "
 
         Returns:
             :bool: True if one is selected False otherwise
@@ -49,6 +55,7 @@ class VotingApp(QDialog):
             selected
         """
         if self.ui.radiobutton_carson.isChecked() or self.ui.radiobutton_john.isChecked():
+            self.ui.label_already_voted.setText(" ")
             return True
         else:
             self.ui.label_already_voted.setText("Must select one")
